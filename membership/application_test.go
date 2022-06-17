@@ -122,7 +122,17 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("멤버십 아이디를 입력하지 않은 경우, 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		_, err := app.Update(UpdateRequest{
+			ID:             "",
+			UserName:       "jenny",
+			MembershipType: "payco",
+		})
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no id"), err)
+		}
 	})
 
 	t.Run("사용자 이름을 입력하지 않은 경우, 예외 처리한다.", func(t *testing.T) {
