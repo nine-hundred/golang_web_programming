@@ -1,6 +1,8 @@
 package membership
 
-import "errors"
+import (
+	"errors"
+)
 
 type Repository struct {
 	data map[string]Membership
@@ -34,7 +36,7 @@ func (r *Repository) UpdateMembership(m Membership) (Membership, error) {
 }
 
 func (r *Repository) DeleteMembership(membership Membership) error {
-	if _, ok := r.data[membership.ID]; !ok {
+	if _, ok := r.data[membership.ID]; ok {
 		delete(r.data, membership.ID)
 		return nil
 	}
