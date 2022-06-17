@@ -43,6 +43,9 @@ func (r *Repository) DeleteMembership(membership Membership) error {
 	return errors.New("not existed id")
 }
 
-func (r *Repository) Read(id string) Membership {
-	return r.data[id]
+func (r *Repository) Read(id string) (Membership, error) {
+	if _, ok := r.data[id]; ok {
+		return r.data[id], nil
+	}
+	return Membership{}, errors.New("there is no user id")
 }

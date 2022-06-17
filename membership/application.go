@@ -72,7 +72,10 @@ func (app *Application) Delete(id string) error {
 }
 
 func (app *Application) Read(id string) (ReadResponse, error) {
-	membership := app.repository.Read(id)
+	membership, err := app.repository.Read(id)
+	if err != nil {
+		return ReadResponse{}, err
+	}
 
 	return ReadResponse{
 		ID:             membership.ID,
