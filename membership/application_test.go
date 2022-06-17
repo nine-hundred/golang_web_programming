@@ -164,6 +164,17 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("주어진 멤버쉽 타입이 아닌 경우, 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+
+		_, err := app.Update(UpdateRequest{
+			ID:             "uuid",
+			UserName:       "jenny",
+			MembershipType: "google",
+		})
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("not supported membership"), err)
+		}
 	})
 }
 
