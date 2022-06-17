@@ -59,7 +59,16 @@ func TestCreateMembership(t *testing.T) {
 	})
 
 	t.Run("naver/toss/payco 이외의 타입을 입력한 경우 실패한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+		req := CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "google",
+		}
 
+		_, err := app.Create(req)
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("not supported membership"), err)
+		}
 	})
 }
 
