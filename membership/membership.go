@@ -35,6 +35,9 @@ func (m *Membership) GetMembership() (Membership, error) {
 }
 
 func (m *Membership) validateMembership() error {
+	if m.ID == "" {
+		return errors.New("there is no id")
+	}
 	if m.UserName == "" {
 		return errors.New("there is no user name")
 	}
