@@ -180,7 +180,23 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("멤버십을 삭제한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+		app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "naver",
+		})
 
+		existedMembershipBuilder := NewMembershipBuilder()
+		for _, membership := range app.repository.data {
+			existedMembershipBuilder.SetID(membership.ID).
+				SetUserName(membership.UserName).
+				SetMembershipType(membership.MembershipType)
+		}
+		existedMembership, _ := existedMembershipBuilder.GetMembership()
+
+		err := app.Delete(existedMembership.ID)
+		assert.Nil(t, err)
+		assert.Equal(t, nil, app.repository.data[existedMembership.ID])
 	})
 
 	t.Run("id를 입력하지 않았을 때 예외 처리한다.", func(t *testing.T) {
