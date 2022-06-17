@@ -200,7 +200,13 @@ func TestDelete(t *testing.T) {
 	})
 
 	t.Run("id를 입력하지 않았을 때 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		err := app.Delete("")
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no id"), err)
+		}
 	})
 
 	t.Run("입력한 id가 존재하지 않을 때 예외 처리한다.", func(t *testing.T) {
