@@ -55,5 +55,9 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 }
 
 func (app *Application) Delete(id string) error {
+	err := app.repository.DeleteMembership(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
