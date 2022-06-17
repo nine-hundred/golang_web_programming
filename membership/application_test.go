@@ -91,14 +91,14 @@ func TestUpdate(t *testing.T) {
 
 		req := UpdateRequest{
 			ID:             existedMembership.ID,
-			UserName:       existedMembership.UserName,
+			UserName:       "jenny",
 			MembershipType: "naver",
 		}
 
 		_, err = app.Update(req)
 		membershipFromData, _ := app.repository.data[existedMembership.ID]
 
-		assert.Equal(t, membershipFromData.MembershipType, "naver")
+		assert.Equal(t, "naver", membershipFromData.MembershipType)
 		assert.Nil(t, err)
 	})
 

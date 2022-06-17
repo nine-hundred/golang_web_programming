@@ -22,10 +22,14 @@ func (r *Repository) AddMembership(m Membership) (Membership, error) {
 
 func (r *Repository) UpdateMembership(m Membership) (Membership, error) {
 	for _, membership := range r.data {
+		if membership.ID == m.ID {
+			continue
+		}
 		if membership.UserName == m.UserName {
 			return Membership{}, errors.New("already existed name")
 		}
 	}
+	r.data[m.ID] = m
 	return m, nil
 }
 
