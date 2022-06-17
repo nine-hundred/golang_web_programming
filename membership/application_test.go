@@ -225,6 +225,16 @@ func TestRead(t *testing.T) {
 	})
 
 	t.Run("입력한 id가 존재하지 않을 때 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "naver",
+		})
+
+		_, err := app.Read("uuid")
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no user id"), err)
+		}
 	})
 }
