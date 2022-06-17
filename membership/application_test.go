@@ -111,7 +111,7 @@ func TestUpdate(t *testing.T) {
 		})
 
 		_, err := app.Update(UpdateRequest{
-			ID:             "",
+			ID:             "uuid",
 			UserName:       "jenny",
 			MembershipType: "payco",
 		})
@@ -136,7 +136,17 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("사용자 이름을 입력하지 않은 경우, 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		_, err := app.Update(UpdateRequest{
+			ID:             "uuid",
+			UserName:       "",
+			MembershipType: "payco",
+		})
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no user name"), err)
+		}
 	})
 
 	t.Run("멤버쉽 타입을 입력하지 않은 경우, 예외 처리한다.", func(t *testing.T) {
