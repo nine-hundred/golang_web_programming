@@ -31,7 +31,14 @@ func TestCreateMembership(t *testing.T) {
 	})
 
 	t.Run("사용자 이름을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
-
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+		req := CreateRequest{
+			UserName:       "",
+			MembershipType: "naver",
+		}
+		_, err := app.Create(req)
+		assert.NotNil(t, err)
+		assert.Errorf(t, err, "there is no user name")
 	})
 
 	t.Run("멤버십 타입을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
