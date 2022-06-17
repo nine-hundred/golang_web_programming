@@ -38,6 +38,9 @@ func (m *Membership) validateMembership() error {
 	if m.UserName == "" {
 		return errors.New("there is no user name")
 	}
+	if m.MembershipType == "" {
+		return errors.New("there is no membership type")
+	}
 	return nil
 }
 
