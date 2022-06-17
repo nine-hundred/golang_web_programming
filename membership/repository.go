@@ -29,7 +29,7 @@ func (r *Repository) UpdateMembership(m Membership) (Membership, error) {
 	return m, nil
 }
 
-func (r *Repository) DeleteMembership(id string) error {
-	delete(r.data, id)
+func (r *Repository) DeleteMembership(membership Membership) error {
+	delete(r.data, membership.ID)
 	return nil
 }
