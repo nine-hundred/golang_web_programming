@@ -42,7 +42,14 @@ func TestCreateMembership(t *testing.T) {
 	})
 
 	t.Run("멤버십 타입을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
-
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+		req := CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "",
+		}
+		_, err := app.Create(req)
+		assert.NotNil(t, err)
+		assert.Errorf(t, err, "there is no membership type")
 	})
 
 	t.Run("naver/toss/payco 이외의 타입을 입력한 경우 실패한다.", func(t *testing.T) {
