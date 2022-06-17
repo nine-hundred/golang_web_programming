@@ -18,8 +18,13 @@ func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
 		SetUserName(request.UserName).
 		SetMembershipType(request.MembershipType)
 
-	membership, err := app.repository.
-		AddMembership(membershipBuilder.GetMembership())
+	membership, err := membershipBuilder.GetMembership()
+	if err != nil {
+		return CreateResponse{}, err
+	}
+
+	_, err = app.repository.
+		AddMembership(membership)
 	if err != nil {
 		return CreateResponse{}, err
 	}
