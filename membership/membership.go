@@ -1,5 +1,7 @@
 package membership
 
+import "errors"
+
 type Membership struct {
 	ID             string
 	UserName       string
@@ -21,12 +23,22 @@ func (m *Membership) SetMembershipType(membershipType string) *Membership {
 	return m
 }
 
-func (m *Membership) GetMembership() Membership {
+func (m *Membership) GetMembership() (Membership, error) {
+	if err := m.validateMembership(); err != nil {
+		return Membership{}, err
+	}
 	return Membership{
 		ID:             m.ID,
 		UserName:       m.UserName,
 		MembershipType: m.MembershipType,
+	}, nil
+}
+
+func (m *Membership) validateMembership() error {
+	if m.UserName == "" {
+		return errors.New("there is no user name")
 	}
+	return nil
 }
 
 func NewMembershipBuilder() *Membership {
