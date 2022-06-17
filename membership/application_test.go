@@ -103,7 +103,22 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("수정하려는 사용자의 이름이 이미 존재하는 사용자 이름이라면 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "payco",
+		})
+
+		_, err := app.Update(UpdateRequest{
+			ID:             "",
+			UserName:       "jenny",
+			MembershipType: "payco",
+		})
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("already existed name"), err)
+		}
 	})
 
 	t.Run("멤버십 아이디를 입력하지 않은 경우, 예외 처리한다.", func(t *testing.T) {

@@ -36,11 +36,11 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 	newMembership, err := NewMembershipBuilder().
 		SetID(request.ID).
 		SetUserName(request.UserName).
-		SetMembershipType(request.MembershipType).GetMembership()
+		SetMembershipType(request.MembershipType).
+		GetMembership()
 	if err != nil {
 		return UpdateResponse{}, err
 	}
-	app.repository.data[newMembership.ID] = newMembership
 
 	return UpdateResponse{
 		ID:             newMembership.ID,
