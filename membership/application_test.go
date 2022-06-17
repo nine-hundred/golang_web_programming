@@ -1,6 +1,7 @@
 package membership
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -26,8 +27,9 @@ func TestCreateMembership(t *testing.T) {
 		}
 
 		_, err := app.Create(alreadyExistedNameReq)
-		assert.NotNil(t, err)
-		assert.Errorf(t, err, "already existed name")
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("already existed name"), err)
+		}
 	})
 
 	t.Run("사용자 이름을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
@@ -36,9 +38,11 @@ func TestCreateMembership(t *testing.T) {
 			UserName:       "",
 			MembershipType: "naver",
 		}
+
 		_, err := app.Create(req)
-		assert.NotNil(t, err)
-		assert.Errorf(t, err, "there is no user name")
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no user name"), err)
+		}
 	})
 
 	t.Run("멤버십 타입을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
@@ -47,9 +51,11 @@ func TestCreateMembership(t *testing.T) {
 			UserName:       "jenny",
 			MembershipType: "",
 		}
+
 		_, err := app.Create(req)
-		assert.NotNil(t, err)
-		assert.Errorf(t, err, "there is no membership type")
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("there is no membership type"), err)
+		}
 	})
 
 	t.Run("naver/toss/payco 이외의 타입을 입력한 경우 실패한다.", func(t *testing.T) {
