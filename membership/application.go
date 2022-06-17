@@ -42,6 +42,11 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 		return UpdateResponse{}, err
 	}
 
+	_, err = app.repository.UpdateMembership(newMembership)
+	if err != nil {
+		return UpdateResponse{}, err
+	}
+
 	return UpdateResponse{
 		ID:             newMembership.ID,
 		UserName:       newMembership.UserName,
