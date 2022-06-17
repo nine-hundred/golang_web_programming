@@ -216,18 +216,11 @@ func TestDelete(t *testing.T) {
 			UserName:       "jenny",
 			MembershipType: "naver",
 		})
-		membershipBuilder := NewMembershipBuilder()
-		for _, m := range app.repository.data {
-			membershipBuilder.SetID(m.ID).
-				SetUserName(m.UserName).
-				SetMembershipType(m.MembershipType)
-		}
-		membership, _ := membershipBuilder.GetMembership()
 
-		err := app.Delete(membership.ID)
+		err := app.Delete("uuid")
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("not existed id"), err)
+			assert.Equal(t, errors.New("there is no id"), err)
 		}
 	})
 }
