@@ -72,6 +72,11 @@ func (app *Application) Delete(id string) error {
 }
 
 func (app *Application) Read(id string) (ReadResponse, error) {
+	membership := app.repository.Read(id)
 
-	return ReadResponse{}, nil
+	return ReadResponse{
+		ID:             membership.ID,
+		UserName:       membership.UserName,
+		MembershipType: membership.MembershipType,
+	}, nil
 }

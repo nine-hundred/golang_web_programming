@@ -42,3 +42,7 @@ func (r *Repository) DeleteMembership(membership Membership) error {
 	}
 	return errors.New("not existed id")
 }
+
+func (r *Repository) Read(id string) Membership {
+	return r.data[id]
+}
