@@ -8,48 +8,48 @@ type Membership struct {
 	MembershipType string
 }
 
-func (m *Membership) SetID(id string) *Membership {
-	m.ID = id
+func (m *MembershipBuilder) SetID(id string) *MembershipBuilder {
+	m.Membership.ID = id
 	return m
 }
 
-func (m *Membership) SetUserName(userName string) *Membership {
-	m.UserName = userName
+func (m *MembershipBuilder) SetUserName(userName string) *MembershipBuilder {
+	m.Membership.UserName = userName
 	return m
 }
 
-func (m *Membership) SetMembershipType(membershipType string) *Membership {
-	m.MembershipType = membershipType
+func (m *MembershipBuilder) SetMembershipType(membershipType string) *MembershipBuilder {
+	m.Membership.MembershipType = membershipType
 	return m
 }
 
-func (m *Membership) GetMembership() (Membership, error) {
+func (m *MembershipBuilder) GetMembership() (*Membership, error) {
 	if err := m.validateMembership(); err != nil {
-		return Membership{}, err
+		return &Membership{}, err
 	}
-	return Membership{
-		ID:             m.ID,
-		UserName:       m.UserName,
-		MembershipType: m.MembershipType,
-	}, nil
+	return m.Membership, nil
 }
 
-func (m *Membership) validateMembership() error {
-	if m.ID == "" {
+func (m *MembershipBuilder) validateMembership() error {
+	if m.Membership.ID == "" {
 		return errors.New("there is no id")
 	}
-	if m.UserName == "" {
+	if m.Membership.UserName == "" {
 		return errors.New("there is no user name")
 	}
-	if m.MembershipType == "" {
+	if m.Membership.MembershipType == "" {
 		return errors.New("there is no membership type")
 	}
-	if !(m.MembershipType == "naver" || m.MembershipType == "toss" || m.MembershipType == "payco") {
+	if !(m.Membership.MembershipType == "naver" || m.Membership.MembershipType == "toss" || m.Membership.MembershipType == "payco") {
 		return errors.New("not supported membership")
 	}
 	return nil
 }
 
-func NewMembershipBuilder() *Membership {
-	return &Membership{}
+type MembershipBuilder struct {
+	Membership *Membership
+}
+
+func NewMembershipBuilder() *MembershipBuilder {
+	return &MembershipBuilder{Membership: &Membership{}}
 }

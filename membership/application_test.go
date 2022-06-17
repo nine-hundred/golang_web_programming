@@ -96,9 +96,9 @@ func TestUpdate(t *testing.T) {
 		}
 
 		_, err = app.Update(req)
-		existedMembership, _ = app.repository.data[existedMembership.ID]
+		membershipFromData, _ := app.repository.data[existedMembership.ID]
 
-		assert.Equal(t, existedMembership.MembershipType, "naver")
+		assert.Equal(t, membershipFromData.MembershipType, "naver")
 		assert.Nil(t, err)
 	})
 
@@ -222,7 +222,6 @@ func TestDelete(t *testing.T) {
 				SetUserName(m.UserName).
 				SetMembershipType(m.MembershipType)
 		}
-		t.Log("hey,", membershipBuilder)
 		membership, _ := membershipBuilder.GetMembership()
 
 		err := app.Delete(membership.ID)

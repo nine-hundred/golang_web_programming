@@ -24,7 +24,7 @@ func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
 	}
 
 	_, err = app.repository.
-		AddMembership(membership)
+		AddMembership(*membership)
 	if err != nil {
 		return CreateResponse{}, err
 	}
@@ -42,7 +42,7 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 		return UpdateResponse{}, err
 	}
 
-	_, err = app.repository.UpdateMembership(newMembership)
+	_, err = app.repository.UpdateMembership(*newMembership)
 	if err != nil {
 		return UpdateResponse{}, err
 	}
@@ -55,13 +55,16 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 }
 
 func (app *Application) Delete(id string) error {
+	m := app.repository.data[id]
 	membership, err := NewMembershipBuilder().
-		SetID(id).
+		SetID(m.ID).
+		SetUserName(m.UserName).
+		SetMembershipType(m.MembershipType).
 		GetMembership()
 	if err != nil {
 		return err
 	}
-	err = app.repository.DeleteMembership(membership)
+	err = app.repository.DeleteMembership(*membership)
 	if err != nil {
 		return err
 	}

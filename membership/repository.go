@@ -30,6 +30,9 @@ func (r *Repository) UpdateMembership(m Membership) (Membership, error) {
 }
 
 func (r *Repository) DeleteMembership(membership Membership) error {
-	delete(r.data, membership.ID)
-	return nil
+	if _, ok := r.data[membership.ID]; !ok {
+		delete(r.data, membership.ID)
+		return nil
+	}
+	return errors.New("not existed id")
 }
