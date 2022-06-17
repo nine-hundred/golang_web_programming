@@ -74,7 +74,32 @@ func TestCreateMembership(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("membership 정보를 갱신한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		_, err := app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "payco",
+		})
+
+		existedMembershipBuilder := NewMembershipBuilder()
+		for _, membership := range app.repository.data {
+			existedMembershipBuilder.SetID(membership.ID).
+				SetUserName(membership.UserName).
+				SetMembershipType(membership.MembershipType)
+		}
+		existedMembership, _ := existedMembershipBuilder.GetMembership()
+
+		req := UpdateRequest{
+			ID:             existedMembership.ID,
+			UserName:       existedMembership.UserName,
+			MembershipType: "naver",
+		}
+
+		_, err = app.Update(req)
+		existedMembership, _ = app.repository.data[existedMembership.ID]
+
+		assert.Equal(t, existedMembership.MembershipType, "naver")
+		assert.Nil(t, err)
 	})
 
 	t.Run("수정하려는 사용자의 이름이 이미 존재하는 사용자 이름이라면 예외 처리한다.", func(t *testing.T) {
