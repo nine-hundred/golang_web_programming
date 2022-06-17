@@ -196,7 +196,7 @@ func TestDelete(t *testing.T) {
 
 		err := app.Delete(existedMembership.ID)
 		assert.Nil(t, err)
-		assert.Equal(t, nil, app.repository.data[existedMembership.ID])
+		assert.Equal(t, Membership{}, app.repository.data[existedMembership.ID])
 	})
 
 	t.Run("id를 입력하지 않았을 때 예외 처리한다.", func(t *testing.T) {
