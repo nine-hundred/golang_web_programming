@@ -76,27 +76,19 @@ func TestUpdate(t *testing.T) {
 	t.Run("membership 정보를 갱신한다.", func(t *testing.T) {
 		app := NewApplication(*NewRepository(map[string]Membership{}))
 
-		_, err := app.Create(CreateRequest{
+		res, err := app.Create(CreateRequest{
 			UserName:       "jenny",
 			MembershipType: "payco",
 		})
 
-		existedMembershipBuilder := NewMembershipBuilder()
-		for _, membership := range app.repository.data {
-			existedMembershipBuilder.SetID(membership.ID).
-				SetUserName(membership.UserName).
-				SetMembershipType(membership.MembershipType)
-		}
-		existedMembership, _ := existedMembershipBuilder.GetMembership()
-
 		req := UpdateRequest{
-			ID:             existedMembership.ID,
+			ID:             res.ID,
 			UserName:       "jenny",
 			MembershipType: "naver",
 		}
 
 		_, err = app.Update(req)
-		membershipFromData, _ := app.repository.data[existedMembership.ID]
+		membershipFromData, _ := app.repository.data[res.ID]
 
 		assert.Equal(t, "naver", membershipFromData.MembershipType)
 		assert.Nil(t, err)
@@ -181,22 +173,14 @@ func TestUpdate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("멤버십을 삭제한다.", func(t *testing.T) {
 		app := NewApplication(*NewRepository(map[string]Membership{}))
-		app.Create(CreateRequest{
+		res, err := app.Create(CreateRequest{
 			UserName:       "jenny",
 			MembershipType: "naver",
 		})
 
-		existedMembershipBuilder := NewMembershipBuilder()
-		for _, membership := range app.repository.data {
-			existedMembershipBuilder.SetID(membership.ID).
-				SetUserName(membership.UserName).
-				SetMembershipType(membership.MembershipType)
-		}
-		existedMembership, _ := existedMembershipBuilder.GetMembership()
-
-		err := app.Delete(existedMembership.ID)
+		err = app.Delete(res.ID)
 		assert.Nil(t, err)
-		assert.Equal(t, Membership{}, app.repository.data[existedMembership.ID])
+		assert.Equal(t, Membership{}, app.repository.data[res.ID])
 	})
 
 	t.Run("id를 입력하지 않았을 때 예외 처리한다.", func(t *testing.T) {
@@ -222,5 +206,25 @@ func TestDelete(t *testing.T) {
 		if assert.Error(t, err) {
 			assert.Equal(t, errors.New("there is no id"), err)
 		}
+	})
+}
+
+func TestRead(t *testing.T) {
+	t.Run("멤버십 id로 멤버십을 가져온다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
+
+		response, err := app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "naver",
+		})
+
+		readResponse, err := app.Read(response.ID)
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, readResponse)
+	})
+
+	t.Run("입력한 id가 존재하지 않을 때 예외 처리한다.", func(t *testing.T) {
+
 	})
 }
