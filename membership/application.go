@@ -11,15 +11,19 @@ func NewApplication(repository Repository) *Application {
 }
 
 func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
-	membership := NewMembershipBuilder()
+	membershipBuilder := NewMembershipBuilder()
 	id := uuid.NewString()
 
-	membership.SetID(id).
+	membershipBuilder.SetID(id).
 		SetUserName(request.UserName).
 		SetMembershipType(request.MembershipType)
 
-	app.repository.data[id] = membership.GetMembership()
-	//app.repository.data[time.Now().String()] =
+	membership, err := app.repository.
+		AddMembership(membershipBuilder.GetMembership())
+	if err != nil {
+		return CreateResponse{}, err
+	}
+
 	return CreateResponse{membership.ID, membership.MembershipType}, nil
 }
 
