@@ -27,6 +27,7 @@ func TestCreateMembership(t *testing.T) {
 
 		_, err := app.Create(alreadyExistedNameReq)
 		assert.NotNil(t, err)
+		assert.Errorf(t, err, "already existed name")
 	})
 
 	t.Run("사용자 이름을 입력하지 않은 경우 실패한다.", func(t *testing.T) {
