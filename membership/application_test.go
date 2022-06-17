@@ -210,6 +210,25 @@ func TestDelete(t *testing.T) {
 	})
 
 	t.Run("입력한 id가 존재하지 않을 때 예외 처리한다.", func(t *testing.T) {
+		app := NewApplication(*NewRepository(map[string]Membership{}))
 
+		app.Create(CreateRequest{
+			UserName:       "jenny",
+			MembershipType: "naver",
+		})
+		membershipBuilder := NewMembershipBuilder()
+		for _, m := range app.repository.data {
+			membershipBuilder.SetID(m.ID).
+				SetUserName(m.UserName).
+				SetMembershipType(m.MembershipType)
+		}
+		t.Log("hey,", membershipBuilder)
+		membership, _ := membershipBuilder.GetMembership()
+
+		err := app.Delete(membership.ID)
+
+		if assert.Error(t, err) {
+			assert.Equal(t, errors.New("not existed id"), err)
+		}
 	})
 }
