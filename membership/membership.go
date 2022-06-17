@@ -41,6 +41,9 @@ func (m *Membership) validateMembership() error {
 	if m.MembershipType == "" {
 		return errors.New("there is no membership type")
 	}
+	if !(m.MembershipType == "naver" || m.MembershipType == "toss" || m.MembershipType == "payco") {
+		return errors.New("not supported membership")
+	}
 	return nil
 }
 
