@@ -1,16 +1,41 @@
 package membership
 
-import "github.com/google/uuid"
+import (
+	"errors"
+	"github.com/asaskevich/govalidator"
+	"github.com/google/uuid"
+)
 
 type Application struct {
 	repository Repository
 }
 
 func NewApplication(repository Repository) *Application {
+	StartValidator()
 	return &Application{repository: repository}
 }
 
+func StartValidator() {
+	govalidator.TagMap["membershipType"] = govalidator.Validator(func(str string) bool {
+		if str == "payco" {
+			return true
+		}
+		if str == "naver" {
+			return true
+		}
+		if str == "toss" {
+			return true
+		}
+		return false
+	})
+}
+
 func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
+	_, err := govalidator.ValidateStruct(request)
+
+	if err != nil {
+		return CreateResponse{}, err
+	}
 	membershipBuilder := NewMembershipBuilder()
 	id := uuid.NewString()
 
@@ -33,6 +58,10 @@ func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
 }
 
 func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
+	_, err := govalidator.ValidateStruct(request)
+	if err != nil {
+		return UpdateResponse{}, err
+	}
 	newMembership, err := NewMembershipBuilder().
 		SetID(request.ID).
 		SetUserName(request.UserName).
@@ -55,6 +84,9 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 }
 
 func (app *Application) Delete(id string) error {
+	if id == "" {
+		return errors.New("there is no id")
+	}
 	m := app.repository.data[id]
 	membership, err := NewMembershipBuilder().
 		SetID(m.ID).

@@ -1,8 +1,8 @@
 package membership
 
 type CreateRequest struct {
-	UserName       string
-	MembershipType string
+	UserName       string `valid:"required"`
+	MembershipType string `valid:"required,membershipType"`
 }
 
 type CreateResponse struct {
@@ -11,9 +11,9 @@ type CreateResponse struct {
 }
 
 type UpdateRequest struct {
-	ID             string
-	UserName       string
-	MembershipType string
+	ID             string `valid:"required"`
+	UserName       string `valid:"required"`
+	MembershipType string `valid:"required,membershipType"`
 }
 
 type UpdateResponse struct {
@@ -23,7 +23,7 @@ type UpdateResponse struct {
 }
 
 type ReadResponse struct {
-	ID             string
-	UserName       string
-	MembershipType string
+	ID             string `valid:"required"`
+	UserName       string `valid:"required"`
+	MembershipType string `valid:"required,membershipType"`
 }

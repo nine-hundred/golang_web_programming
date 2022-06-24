@@ -41,7 +41,7 @@ func TestCreateMembership(t *testing.T) {
 
 		_, err := app.Create(req)
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no user name"), err)
+			assert.Equal(t, errors.New("UserName: non zero value required").Error(), err.Error())
 		}
 	})
 
@@ -54,7 +54,7 @@ func TestCreateMembership(t *testing.T) {
 
 		_, err := app.Create(req)
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no membership type"), err)
+			assert.Equal(t, errors.New("MembershipType: non zero value required").Error(), err.Error())
 		}
 	})
 
@@ -67,7 +67,7 @@ func TestCreateMembership(t *testing.T) {
 
 		_, err := app.Create(req)
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("not supported membership"), err)
+			assert.Equal(t, errors.New("MembershipType: google does not validate as membershipType").Error(), err.Error())
 		}
 	})
 }
@@ -123,7 +123,7 @@ func TestUpdate(t *testing.T) {
 		})
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no id"), err)
+			assert.Equal(t, errors.New("ID: non zero value required").Error(), err.Error())
 		}
 	})
 
@@ -137,7 +137,7 @@ func TestUpdate(t *testing.T) {
 		})
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no user name"), err)
+			assert.Equal(t, errors.New("UserName: non zero value required").Error(), err.Error())
 		}
 	})
 
@@ -151,7 +151,7 @@ func TestUpdate(t *testing.T) {
 		})
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no membership type"), err)
+			assert.Equal(t, errors.New("MembershipType: non zero value required").Error(), err.Error())
 		}
 	})
 
@@ -165,7 +165,7 @@ func TestUpdate(t *testing.T) {
 		})
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("not supported membership"), err)
+			assert.Equal(t, errors.New("MembershipType: google does not validate as membershipType").Error(), err.Error())
 		}
 	})
 }
@@ -204,7 +204,7 @@ func TestDelete(t *testing.T) {
 		err := app.Delete("uuid")
 
 		if assert.Error(t, err) {
-			assert.Equal(t, errors.New("there is no id"), err)
+			assert.Equal(t, errors.New("not existed id"), err)
 		}
 	})
 }
