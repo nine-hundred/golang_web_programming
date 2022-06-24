@@ -2,6 +2,7 @@ package membership
 
 import (
 	"errors"
+	"sort"
 )
 
 type Repository struct {
@@ -43,9 +44,19 @@ func (r *Repository) DeleteMembership(membership Membership) error {
 	return errors.New("not existed id")
 }
 
-func (r *Repository) Read(id string) (Membership, error) {
+func (r *Repository) ReadMembership(id string) (Membership, error) {
 	if _, ok := r.data[id]; ok {
 		return r.data[id], nil
 	}
 	return Membership{}, errors.New("there is no user id")
+}
+
+func (r *Repository) ReadAllMemberships() (memberships []Membership) {
+	for _, membership := range r.data {
+		memberships = append(memberships, membership)
+	}
+	sort.Slice(memberships, func(i, j int) bool {
+		return memberships[i].ID > memberships[j].ID
+	})
+	return memberships
 }

@@ -22,6 +22,11 @@ type UpdateResponse struct {
 	MembershipType string
 }
 
+type ReadRequest struct {
+	Limit  int
+	Offset int
+}
+
 type ReadResponse struct {
 	ID             string `valid:"required"`
 	UserName       string `valid:"required"`

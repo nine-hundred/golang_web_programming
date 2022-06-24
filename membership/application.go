@@ -104,7 +104,7 @@ func (app *Application) Delete(id string) error {
 }
 
 func (app *Application) Read(id string) (ReadResponse, error) {
-	membership, err := app.repository.Read(id)
+	membership, err := app.repository.ReadMembership(id)
 	if err != nil {
 		return ReadResponse{}, err
 	}
@@ -114,4 +114,37 @@ func (app *Application) Read(id string) (ReadResponse, error) {
 		UserName:       membership.UserName,
 		MembershipType: membership.MembershipType,
 	}, nil
+}
+
+func (app *Application) ReadAll(request ReadRequest) ([]ReadResponse, error) {
+	memberships := app.repository.ReadAllMemberships()
+	memberships = splitMemberships(request.Limit, request.Offset, memberships)
+	res := make([]ReadResponse, 0)
+	for _, membership := range memberships {
+		res = append(res, ReadResponse{
+			ID:             membership.ID,
+			UserName:       membership.UserName,
+			MembershipType: membership.MembershipType,
+		})
+	}
+	return res, nil
+}
+
+func splitMemberships(limit int, offset int, memberships []Membership) []Membership {
+	if offset == 0 && limit == 0 {
+		return memberships
+	}
+	membershipSlice := make([][]Membership, 0)
+	j := 0
+	for i := 0; i < len(memberships); i += limit {
+		j += limit
+		if j > len(memberships) {
+			j = len(memberships)
+		}
+		membershipSlice = append(membershipSlice, memberships[i:j])
+	}
+	if offset >= len(membershipSlice) {
+		return []Membership{}
+	}
+	return membershipSlice[offset]
 }

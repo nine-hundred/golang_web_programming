@@ -3,6 +3,7 @@ package membership
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 )
 
 func Create(c echo.Context) error {
@@ -57,5 +58,34 @@ func Read(c echo.Context) error {
 }
 
 func ReadAll(c echo.Context) error {
-	return nil
+	limit, offset, err := atoiToLimitAndOffset(c)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+
+	req := ReadRequest{
+		Limit:  limit,
+		Offset: offset,
+	}
+
+	res, err := App.ReadAll(req)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	return c.JSON(http.StatusOK, res)
+}
+
+func atoiToLimitAndOffset(c echo.Context) (limit int, offset int, err error) {
+	if c.QueryParam("limit") == "" || c.QueryParam("offset") == "" {
+		return 0, 0, nil
+	}
+	limit, err = strconv.Atoi(c.QueryParam("limit"))
+	if err != nil {
+		return 0, 0, err
+	}
+	offset, err = strconv.Atoi(c.QueryParam("offset"))
+	if err != nil {
+		return 0, 0, err
+	}
+	return limit, offset, nil
 }
