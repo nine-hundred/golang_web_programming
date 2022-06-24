@@ -6,8 +6,8 @@ type CreateRequest struct {
 }
 
 type CreateResponse struct {
-	ID             string
-	MembershipType string
+	ID             string `json:"id"`
+	MembershipType string `json:"membershipType"`
 }
 
 type UpdateRequest struct {
