@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/asaskevich/govalidator"
 	"github.com/google/uuid"
+	"net/http"
 )
 
 type Application struct {
@@ -54,7 +55,12 @@ func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
 		return CreateResponse{}, err
 	}
 
-	return CreateResponse{membership.ID, membership.MembershipType}, nil
+	return CreateResponse{
+		Code:           http.StatusCreated,
+		Message:        http.StatusText(http.StatusCreated),
+		ID:             membership.ID,
+		MembershipType: membership.MembershipType,
+	}, nil
 }
 
 func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
@@ -77,6 +83,8 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 	}
 
 	return UpdateResponse{
+		Code:           http.StatusOK,
+		Message:        http.StatusText(http.StatusOK),
 		ID:             newMembership.ID,
 		UserName:       newMembership.UserName,
 		MembershipType: newMembership.MembershipType,
@@ -110,6 +118,8 @@ func (app *Application) Read(id string) (ReadResponse, error) {
 	}
 
 	return ReadResponse{
+		Code:           http.StatusOK,
+		Message:        http.StatusText(http.StatusOK),
 		ID:             membership.ID,
 		UserName:       membership.UserName,
 		MembershipType: membership.MembershipType,
@@ -122,6 +132,8 @@ func (app *Application) ReadAll(request ReadRequest) ([]ReadResponse, error) {
 	res := make([]ReadResponse, 0)
 	for _, membership := range memberships {
 		res = append(res, ReadResponse{
+			Code:           http.StatusOK,
+			Message:        http.StatusText(http.StatusOK),
 			ID:             membership.ID,
 			UserName:       membership.UserName,
 			MembershipType: membership.MembershipType,
