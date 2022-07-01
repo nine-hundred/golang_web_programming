@@ -49,3 +49,9 @@ type DeleteResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
+
+type LoginResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	JWT     string `json:"jwt,omitempty"`
+}

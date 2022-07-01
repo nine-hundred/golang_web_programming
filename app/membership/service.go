@@ -132,6 +132,14 @@ func (s *Service) ReadAllMembership(req ReadAllRequest) ReadAllResponse {
 	}
 }
 
+func (s *Service) FindMemebershipByName(name string) (Membership, error) {
+	membership, err := s.repository.ReadMembershipByName(name)
+	if err != nil {
+		return Membership{}, err
+	}
+	return membership, nil
+}
+
 func parseLimit(req *ReadAllRequest) (int, error) {
 	if req.Limit == "" {
 		return 0, nil
@@ -152,4 +160,11 @@ func parseOffset(req *ReadAllRequest) (int, error) {
 		return 0, errors.New("wrong offset type")
 	}
 	return offset, nil
+}
+
+func CheckIdAndPw(name string, pw string) bool {
+	if name != pw {
+		return false
+	}
+	return true
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/asaskevich/govalidator"
+	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
@@ -93,4 +94,40 @@ func (controller Controller) GetMemebershipImg(c echo.Context) error {
 	}
 	c.Response().Header().Set("ETag", etag)
 	return c.File(url)
+}
+
+func (controller Controller) Login(c echo.Context) error {
+	if !CheckIdAndPw(c.Param("name"), c.Param("pw")) {
+		return c.JSON(http.StatusBadRequest, LoginResponse{
+			Code:    http.StatusBadRequest,
+			Message: "pw is not correct",
+		})
+	}
+
+	membership, err := controller.service.
+		FindMemebershipByName(c.FormValue("name"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, LoginResponse{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+
+	tokenStr, err := GenJwt(jwt.MapClaims{
+		"id":   membership.ID,
+		"name": c.FormValue("name"),
+		"pw":   c.FormValue("pw"),
+	})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, LoginResponse{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+	
+	return c.JSON(http.StatusOK, LoginResponse{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		JWT:     tokenStr,
+	})
 }

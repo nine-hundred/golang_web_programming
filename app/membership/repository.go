@@ -62,6 +62,15 @@ func (r *Repository) ReadAllMemberships(limit int, offset int) (memberships []Me
 	return memberships, nil
 }
 
+func (r *Repository) ReadMembershipByName(name string) (Membership, error) {
+	for _, membership := range r.data {
+		if membership.UserName == name {
+			return membership, nil
+		}
+	}
+	return Membership{}, errors.New("there is no membership")
+}
+
 func splitMemberships(limit int, offset int, memberships []Membership) []Membership {
 	if offset == 0 && limit == 0 {
 		return memberships
