@@ -12,23 +12,7 @@ type Application struct {
 }
 
 func NewApplication(repository Repository) *Application {
-	StartValidator()
 	return &Application{repository: repository}
-}
-
-func StartValidator() {
-	govalidator.TagMap["membershipType"] = govalidator.Validator(func(str string) bool {
-		if str == "payco" {
-			return true
-		}
-		if str == "naver" {
-			return true
-		}
-		if str == "toss" {
-			return true
-		}
-		return false
-	})
 }
 
 func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
@@ -44,7 +28,7 @@ func (app *Application) Create(request CreateRequest) (CreateResponse, error) {
 		SetUserName(request.UserName).
 		SetMembershipType(request.MembershipType)
 
-	membership, err := membershipBuilder.GetMembership()
+	membership := membershipBuilder.GetMembership()
 	if err != nil {
 		return CreateResponse{}, err
 	}
@@ -68,7 +52,7 @@ func (app *Application) Update(request UpdateRequest) (UpdateResponse, error) {
 	if err != nil {
 		return UpdateResponse{}, err
 	}
-	newMembership, err := NewMembershipBuilder().
+	newMembership := NewMembershipBuilder().
 		SetID(request.ID).
 		SetUserName(request.UserName).
 		SetMembershipType(request.MembershipType).
@@ -95,16 +79,7 @@ func (app *Application) Delete(id string) error {
 	if id == "" {
 		return errors.New("there is no id")
 	}
-	m := app.repository.data[id]
-	membership, err := NewMembershipBuilder().
-		SetID(m.ID).
-		SetUserName(m.UserName).
-		SetMembershipType(m.MembershipType).
-		GetMembership()
-	if err != nil {
-		return err
-	}
-	err = app.repository.DeleteMembership(*membership)
+	err := app.repository.DeleteMembership(id)
 	if err != nil {
 		return err
 	}
@@ -126,9 +101,10 @@ func (app *Application) Read(id string) (ReadResponse, error) {
 	}, nil
 }
 
-func (app *Application) ReadAll(request ReadRequest) ([]ReadResponse, error) {
-	memberships := app.repository.ReadAllMemberships()
-	memberships = splitMemberships(request.Limit, request.Offset, memberships)
+func (app *Application) ReadAll(request ReadAllRequest) ([]ReadResponse, error) {
+	memberships, _ := app.repository.ReadAllMemberships(0, 0)
+
+	//memberships = splitMemberships(request.Limit, request.Offset, memberships)
 	res := make([]ReadResponse, 0)
 	for _, membership := range memberships {
 		res = append(res, ReadResponse{
@@ -140,23 +116,4 @@ func (app *Application) ReadAll(request ReadRequest) ([]ReadResponse, error) {
 		})
 	}
 	return res, nil
-}
-
-func splitMemberships(limit int, offset int, memberships []Membership) []Membership {
-	if offset == 0 && limit == 0 {
-		return memberships
-	}
-	membershipSlice := make([][]Membership, 0)
-	j := 0
-	for i := 0; i < len(memberships); i += limit {
-		j += limit
-		if j > len(memberships) {
-			j = len(memberships)
-		}
-		membershipSlice = append(membershipSlice, memberships[i:j])
-	}
-	if offset >= len(membershipSlice) {
-		return []Membership{}
-	}
-	return membershipSlice[offset]
 }

@@ -26,14 +26,20 @@ type UpdateResponse struct {
 	MembershipType string `json:"membership_type"`
 }
 
-type ReadRequest struct {
-	Limit  int
-	Offset int
+type ReadAllRequest struct {
+	Limit  string
+	Offset string
+}
+
+type ReadAllResponse struct {
+	Code         int          `json:"code"`
+	Message      string       `json:"message"`
+	ReadResponse []Membership `json:"memberships"`
 }
 
 type ReadResponse struct {
-	Code           int    `json:"code"`
-	Message        string `json:"message"`
+	Code           int    `json:"code,omitempty"`
+	Message        string `json:"message,omitempty"`
 	ID             string `json:"id"valid:"required"`
 	UserName       string `json:"user_name"valid:"required"`
 	MembershipType string `json:"membership_type"valid:"required,membershipType"`

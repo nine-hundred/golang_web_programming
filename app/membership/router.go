@@ -7,16 +7,16 @@ import (
 
 var App = &Application{}
 
-func InitMembershipRouter(e *echo.Echo) *echo.Group {
+func SetMembershipRouter(e *echo.Echo, controller Controller) *echo.Echo {
 	App = NewApplication(*NewRepository(map[string]Membership{}))
 	membershipGroup := e.Group("/memberships")
 	membershipGroup.Use(LoggingMiddleware)
-	membershipGroup.POST("", Create)
-	membershipGroup.PATCH("", Update)
-	membershipGroup.DELETE("/:id", Delete)
-	membershipGroup.GET("/:id", Read)
-	membershipGroup.GET("", ReadAll)
-	return membershipGroup
+	membershipGroup.POST("", controller.Create)
+	membershipGroup.PATCH("", controller.Update)
+	membershipGroup.DELETE("/:id", controller.Delete)
+	membershipGroup.GET("/:id", controller.Read)
+	membershipGroup.GET("", controller.ReadAll)
+	return e
 }
 
 func LoggingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -25,8 +25,9 @@ func LoggingMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		log.Println("url:", c.Request().URL.String())
 		log.Println("method:", c.Request().Method)
 		log.Println("body:", c.Request().Body)
+		err := next(c)
 		log.Println("====response====")
 		log.Println("status:", c.Response().Status)
-		return next(c)
+		return err
 	}
 }

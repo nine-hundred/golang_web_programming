@@ -21,8 +21,8 @@ func (m *MembershipBuilder) SetMembershipType(membershipType string) *Membership
 	return m
 }
 
-func (m *MembershipBuilder) GetMembership() (*Membership, error) {
-	return m.Membership, nil
+func (m *MembershipBuilder) GetMembership() *Membership {
+	return m.Membership
 }
 
 type MembershipBuilder struct {

@@ -36,9 +36,9 @@ func (r *Repository) UpdateMembership(m Membership) (Membership, error) {
 	return m, nil
 }
 
-func (r *Repository) DeleteMembership(membership Membership) error {
-	if _, ok := r.data[membership.ID]; ok {
-		delete(r.data, membership.ID)
+func (r *Repository) DeleteMembership(membership string) error {
+	if _, ok := r.data[membership]; ok {
+		delete(r.data, membership)
 		return nil
 	}
 	return errors.New("not existed id")
@@ -51,12 +51,32 @@ func (r *Repository) ReadMembership(id string) (Membership, error) {
 	return Membership{}, errors.New("there is no user id")
 }
 
-func (r *Repository) ReadAllMemberships() (memberships []Membership) {
+func (r *Repository) ReadAllMemberships(limit int, offset int) (memberships []Membership, err error) {
 	for _, membership := range r.data {
 		memberships = append(memberships, membership)
 	}
 	sort.Slice(memberships, func(i, j int) bool {
 		return memberships[i].ID > memberships[j].ID
 	})
-	return memberships
+	memberships = splitMemberships(limit, offset, memberships)
+	return memberships, nil
+}
+
+func splitMemberships(limit int, offset int, memberships []Membership) []Membership {
+	if offset == 0 && limit == 0 {
+		return memberships
+	}
+	membershipSlice := make([][]Membership, 0)
+	j := 0
+	for i := 0; i < len(memberships); i += limit {
+		j += limit
+		if j > len(memberships) {
+			j = len(memberships)
+		}
+		membershipSlice = append(membershipSlice, memberships[i:j])
+	}
+	if offset >= len(membershipSlice) {
+		return []Membership{}
+	}
+	return membershipSlice[offset]
 }
