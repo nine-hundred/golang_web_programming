@@ -34,5 +34,6 @@ func NewEcho(config Config) *echo.Echo {
 
 	controller := config.Controller
 	membership.SetMembershipRouter(e, controller)
+	e.GET("/membershipImg", controller.GetMemebershipImg)
 	return e
 }
